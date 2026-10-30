@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: frog
   _foodRole: 0
-  _prefab: {fileID: 0}
+  _prefab: {fileID: 4972147871462669881, guid: 7bf204c97fc29cc42b35f0934a8cd904, type: 3}
   _movement: {fileID: 11400000, guid: 6d9924f3355878e3d51a507d5eb9597b, type: 2}

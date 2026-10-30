@@ -1,6 +1,6 @@
 {
     "name": "Template.Infrastructure.TestHelpers",
-    "references": ["Zenject"],
+    "references": ["Zenject", "Template.Game.Animals"],
     "overrideReferences": true,
     "precompiledReferences": ["Zenject-usage.dll"],
     "autoReferenced": false,

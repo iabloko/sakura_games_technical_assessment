@@ -2,6 +2,8 @@
     "name": "Template.StateMachine.Tests",
     "rootNamespace": "",
     "references": [
+        "GUID:4bdc02a2b9d209ff329c27a747f8cbb9",
+        "GUID:3a8528f7e76abb74baee4258f650a672",
         "Template.Infrastructure.TestHelpers",
         "GUID:84651a3751eca9349aac36a66bba901b",
         "GUID:0d8beb7f090555447a6cf5ce9e54dbb4",

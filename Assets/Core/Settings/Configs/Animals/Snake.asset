@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: snake
   _foodRole: 1
-  _prefab: {fileID: 0}
+  _prefab: {fileID: 4383753998573403241, guid: 53d4ff152ab3728439cef21a82364e06, type: 3}
   _movement: {fileID: 11400000, guid: 437f390c1d37447ce27ac52eb1824d87, type: 2}
