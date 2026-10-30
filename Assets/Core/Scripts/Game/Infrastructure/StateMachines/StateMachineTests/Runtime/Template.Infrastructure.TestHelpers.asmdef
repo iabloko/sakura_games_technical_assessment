@@ -1,0 +1,8 @@
+{
+    "name": "Template.Infrastructure.TestHelpers",
+    "references": ["Zenject"],
+    "overrideReferences": true,
+    "precompiledReferences": ["Zenject-usage.dll"],
+    "autoReferenced": false,
+    "optionalUnityReferences": ["TestAssemblies"]
+}

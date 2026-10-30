@@ -1,4 +1,5 @@
 using Core.Scripts.Game.Infrastructure.Bootstrapper;
+using Core.Scripts.Game.Infrastructure.Loader;
 using Core.Scripts.Game.Infrastructure.Services.AssetProviderService;
 using Core.Scripts.Game.Infrastructure.StateMachines.GameStateMachineMain;
 using Core.Scripts.Game.Infrastructure.StateMachines.GameStateMachineMain.States;
@@ -17,15 +18,12 @@ namespace Core.Scripts.Game.Installers
 
         private void BindHelpers()
         {
-            Container.Bind<IAssetProvider>().To<AssetProvider>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<AssetProvider>().AsSingle().NonLazy();
+            Container.Bind<SceneLoader>().AsSingle();
         }
 
         private void BindGameStateMachine()
         {
-            Container.Bind<BootStrapState>().AsSingle();
-            Container.Bind<LoadLevelState>().AsSingle();
-            Container.Bind<GamePlayState>().AsSingle();
-
             Container.BindFactory<GameStateMachine, BootStrapState, BootStrapState.Factory>().AsSingle();
             Container.BindFactory<GameStateMachine, LoadLevelState, LoadLevelState.Factory>().AsSingle();
             Container.BindFactory<GameStateMachine, GamePlayState, GamePlayState.Factory>().AsSingle();

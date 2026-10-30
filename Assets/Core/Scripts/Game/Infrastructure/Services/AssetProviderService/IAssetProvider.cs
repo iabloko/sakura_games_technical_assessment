@@ -6,34 +6,21 @@ namespace Core.Scripts.Game.Infrastructure.Services.AssetProviderService
 {
     public interface IAssetProvider
     {
-        void ReleaseObject(Object obj);
-        void ReleaseInstance(GameObject obj);
+        // Keep the lease alive until every consumer of the asset has finished.
+        UniTask<AssetLease<T>> LoadAsync<T>(string path, CancellationToken cancellationToken = default)
+            where T : Object;
 
-        public GameObject Instantiate(GameObject creatableObject, Transform parent = null, bool dontDestroy = false);
-
-        public GameObject Instantiate(string path, Transform parent, bool dontDestroy, bool instantiateInWorldSpace,
-            bool trackHandle);
-
-        public T InstantiateComponent<T>(T reference, Transform parent = null, bool dontDestroy = false)
+        // Direct prefab references are owned by the caller, not Addressables.
+        GameObject Instantiate(GameObject prefab, Transform parent = null, bool dontDestroy = false);
+        T InstantiateComponent<T>(T prefab, Transform parent = null, bool dontDestroy = false)
             where T : Component;
 
-        public T InstantiateObject<T>(string path, Transform parent = null, bool dontDestroy = false,
-            bool instantiateInWorldSpace = true, bool trackHandle = true) where T : MonoBehaviour;
+        // The provider retains the loaded prefab until the instance has actually been destroyed.
+        UniTask<GameObject> InstantiateObjectAsync(string path, CancellationToken cancellationToken = default,
+            Transform parent = null, bool dontDestroy = false);
+        UniTask<T> InstantiateAsync<T>(string path, CancellationToken cancellationToken = default,
+            Transform parent = null, bool dontDestroy = false) where T : Component;
 
-        public T Load<T>(string path) where T : Object;
-
-        public UniTask<GameObject> InstantiateObjectAsync(GameObject creatableObject,
-            CancellationTokenSource cancellationTokenSource, Transform parent = null,
-            bool dontDestroy = false, bool instantiateInWorldSpace = true, bool trackHandle = true);
-
-        public UniTask<GameObject> InstantiateObjectAsync(string path, CancellationTokenSource cancellationTokenSource,
-            Transform parent = null, bool dontDestroy = false, bool instantiateInWorldSpace = true,
-            bool trackHandle = true);
-
-        public UniTask<T> InstantiateAsync<T>(string path, CancellationTokenSource cancellationTokenSource,
-            Transform parent = null, bool dontDestroy = false, bool instantiateInWorldSpace = true,
-            bool trackHandle = true) where T : MonoBehaviour;
-
-        public UniTask<T> LoadAsync<T>(string path, CancellationTokenSource cancellationTokenSource) where T : Object;
+        void ReleaseInstance(GameObject instance);
     }
 }

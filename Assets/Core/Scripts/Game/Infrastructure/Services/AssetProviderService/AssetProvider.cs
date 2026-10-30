@@ -1,160 +1,199 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.SceneManagement;
+using Zenject;
 using Object = UnityEngine.Object;
 
 namespace Core.Scripts.Game.Infrastructure.Services.AssetProviderService
 {
-    public sealed class AssetProvider : IAssetProvider
+    public sealed class AssetProvider : IAssetProvider, ILateTickable, IDisposable
     {
-        #region ASYNCHRONOUSLY
+        private readonly IInstantiator _instantiator;
+        private readonly Dictionary<GameObject, AssetLease<GameObject>> _instances = new();
+        private readonly List<GameObject> _destroyedInstances = new();
+        private bool _disposed;
 
-        async UniTask<T> IAssetProvider.InstantiateAsync<T>(string path,
-            CancellationTokenSource cancellationTokenSource, Transform parent, bool dontDestroy,
-            bool instantiateInWorldSpace, bool trackHandle)
+        public AssetProvider(IInstantiator instantiator) => _instantiator = instantiator;
+
+        public async UniTask<AssetLease<T>> LoadAsync<T>(string path,
+            CancellationToken cancellationToken = default) where T : Object
         {
-            T createdObject;
+            ThrowIfDisposed();
+            cancellationToken.ThrowIfCancellationRequested();
+            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentException("Asset address is required.", nameof(path));
+            return await AwaitAssetAsync(Addressables.LoadAssetAsync<T>(path), cancellationToken);
+        }
 
+        internal async UniTask<AssetLease<T>> AwaitAssetAsync<T>(AsyncOperationHandle<T> handle,
+            CancellationToken cancellationToken) where T : Object
+        {
             try
             {
-                createdObject =
-                    (await Addressables.InstantiateAsync(path, parent, instantiateInWorldSpace, trackHandle))
-                    .GetComponent<T>();
+                await handle.ToUniTask(cancellationToken: cancellationToken, autoReleaseWhenCanceled: false);
+                cancellationToken.ThrowIfCancellationRequested();
+                ThrowIfDisposed();
+                return new AssetLease<T>(handle);
             }
-            catch (Exception e)
+            catch
             {
-                Debug.LogError($"{path}");
-                Debug.LogError($"{e.Message}");
-                return default;
+                // A pending load finishes internally, but cannot create a late instance.
+                if (handle.IsValid()) Addressables.Release(handle);
+                throw;
             }
-
-            if (dontDestroy) Object.DontDestroyOnLoad(createdObject);
-
-            return createdObject;
         }
 
-        async UniTask<GameObject> IAssetProvider.InstantiateObjectAsync(GameObject creatableObject,
-            CancellationTokenSource cancellationTokenSource, Transform parent,
-            bool dontDestroy, bool instantiateInWorldSpace, bool trackHandle)
+        public GameObject Instantiate(GameObject prefab, Transform parent = null, bool dontDestroy = false)
+            => InstantiatePrefab(prefab, parent, dontDestroy, null);
+
+        private GameObject InstantiatePrefab(GameObject prefab, Transform parent, bool dontDestroy,
+            AssetLease<GameObject> lease)
         {
-            GameObject createdObject;
+            GameObject staging = null;
+            GameObject instance = null;
             try
             {
-                createdObject =
-                    (await Addressables.InstantiateAsync(creatableObject, parent, instantiateInWorldSpace, trackHandle))
-                    .gameObject;
+                ThrowIfDisposed();
+                if (prefab == null) throw new ArgumentNullException(nameof(prefab));
+
+                // Keep a partially injected clone inactive and reachable if Zenject throws.
+                staging = new GameObject("Prefab initialization");
+                staging.SetActive(false);
+                if (lease != null) _instances.Add(staging, lease);
+                instance = _instantiator.InstantiatePrefab(prefab, staging.transform);
+                if (lease != null)
+                {
+                    _instances.Add(instance, lease);
+                    _instances.Remove(staging);
+                }
+
+                instance.transform.SetParent(parent, false);
+                if (parent == null && !dontDestroy)
+                    SceneManager.MoveGameObjectToScene(instance, SceneManager.GetActiveScene());
+                if (dontDestroy)
+                {
+                    instance.transform.SetParent(null, true);
+                    Object.DontDestroyOnLoad(instance);
+                }
+                ThrowIfDisposed();
+                return instance;
             }
-            catch (Exception e)
+            catch
             {
-                Debug.LogError($"{e.Message}");
-                return default;
+                if (instance != null) ReleaseInstance(instance);
+                if (staging == null) lease?.Dispose();
+                throw;
             }
-
-            if (dontDestroy) Object.DontDestroyOnLoad(createdObject);
-
-            return createdObject;
+            finally
+            {
+                DestroyObject(staging);
+            }
         }
 
-        async UniTask<GameObject> IAssetProvider.InstantiateObjectAsync(string path,
-            CancellationTokenSource cancellationTokenSource, Transform parent, bool dontDestroy,
-            bool instantiateInWorldSpace, bool trackHandle)
-        {
-            GameObject createdObject = null;
-
-            try
-            {
-                createdObject =
-                    (await Addressables.InstantiateAsync(path, parent, instantiateInWorldSpace, trackHandle));
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"{path}");
-                Debug.LogError($"{e.Message}");
-                return null;
-            }
-
-            if (dontDestroy) Object.DontDestroyOnLoad(createdObject);
-
-            return createdObject;
-        }
-
-        async UniTask<T> IAssetProvider.LoadAsync<T>(string path, CancellationTokenSource cancellationTokenSource)
-            => (await Addressables.LoadAssetAsync<T>(path));
-
-        #endregion
-
-        #region SYNCHRONOUSLY
-
-        GameObject IAssetProvider.Instantiate(GameObject creatableObject, Transform parent, bool dontDestroy)
-        {
-            GameObject create = Object.Instantiate(creatableObject, parent);
-            if (dontDestroy) Object.DontDestroyOnLoad(create);
-            return create;
-        }
-
-        public T InstantiateComponent<T>(T reference, Transform parent = null, bool dontDestroy = false)
+        public T InstantiateComponent<T>(T prefab, Transform parent = null, bool dontDestroy = false)
             where T : Component
         {
-            T create = Object.Instantiate(reference, parent);
-            if (dontDestroy) Object.DontDestroyOnLoad(create);
-            return create;
+            if (prefab == null) throw new ArgumentNullException(nameof(prefab));
+            return Instantiate(prefab.gameObject, parent, dontDestroy).GetComponent<T>();
         }
 
-        GameObject IAssetProvider.Instantiate(string path, Transform parent, bool dontDestroy,
-            bool instantiateInWorldSpace, bool trackHandle)
+        public async UniTask<GameObject> InstantiateObjectAsync(string path,
+            CancellationToken cancellationToken = default, Transform parent = null, bool dontDestroy = false)
         {
-            GameObject createdObject = null;
-
-            try
+            var hadParent = parent != null;
+            var lease = await LoadAsync<GameObject>(path, cancellationToken);
+            if (hadParent && parent == null)
             {
-                createdObject = Addressables
-                    .InstantiateAsync(path, parent, instantiateInWorldSpace, trackHandle)
-                    .WaitForCompletion();
+                lease.Dispose();
+                throw new MissingReferenceException("The parent was destroyed while loading the prefab.");
             }
-            catch (Exception e)
-            {
-                Debug.LogError($"{e.Message}");
-                return null;
-            }
-
-            if (dontDestroy) Object.DontDestroyOnLoad(createdObject);
-
-            return createdObject;
+            return InstantiateLoadedPrefab(lease, cancellationToken, parent, dontDestroy);
         }
 
-        T IAssetProvider.InstantiateObject<T>(string path, Transform parent, bool dontDestroy,
-            bool instantiateInWorldSpace, bool trackHandle)
+        internal GameObject InstantiateLoadedPrefab(AssetLease<GameObject> lease, CancellationToken cancellationToken,
+            Transform parent = null, bool dontDestroy = false)
         {
-            T createdObject = null;
-
-            try
+            if (cancellationToken.IsCancellationRequested)
             {
-                createdObject = Addressables
-                    .InstantiateAsync(path, parent, instantiateInWorldSpace, trackHandle)
-                    .WaitForCompletion()
-                    .GetComponent<T>();
-                createdObject.name = typeof(T).Name;
+                lease.Dispose();
+                cancellationToken.ThrowIfCancellationRequested();
             }
-            catch (Exception e)
+            var instance = InstantiatePrefab(lease.Asset, parent, dontDestroy, lease);
+            // Injection/Awake may have cancelled the owner during instantiation.
+            if (cancellationToken.IsCancellationRequested)
             {
-                Debug.LogError($"{path}");
-                Debug.LogError($"{e.Message}");
-                return null;
+                ReleaseInstance(instance);
+                cancellationToken.ThrowIfCancellationRequested();
             }
-
-            if (dontDestroy) Object.DontDestroyOnLoad(createdObject);
-
-            return createdObject;
+            return instance;
         }
 
-        T IAssetProvider.Load<T>(string path)
-            => Addressables.LoadAssetAsync<T>(path).WaitForCompletion();
+        public async UniTask<T> InstantiateAsync<T>(string path, CancellationToken cancellationToken = default,
+            Transform parent = null, bool dontDestroy = false) where T : Component
+        {
+            var instance = await InstantiateObjectAsync(path, cancellationToken, parent, dontDestroy);
+            if (instance.TryGetComponent<T>(out var component)) return component;
+            ReleaseInstance(instance);
+            throw new MissingComponentException($"Prefab '{path}' has no {typeof(T).Name} component on its root.");
+        }
 
-        #endregion
+        public void ReleaseInstance(GameObject instance)
+        {
+            if (instance == null) return;
+            instance.SetActive(false);
+            DestroyObject(instance);
+        }
 
-        void IAssetProvider.ReleaseObject(Object obj) => Addressables.Release(obj);
-        void IAssetProvider.ReleaseInstance(GameObject obj) => Addressables.ReleaseInstance(obj);
+        private static void DestroyObject(GameObject instance)
+        {
+            if (instance == null) return;
+            if (Application.isPlaying) Object.Destroy(instance);
+            else Object.DestroyImmediate(instance);
+        }
+
+        public void LateTick()
+        {
+            // OnDestroy is not guaranteed for objects that were never active. Observing actual
+            // destruction also handles inactive prefabs and scene unloading without unloading
+            // dependencies before Unity has destroyed their consumers.
+            foreach (var entry in _instances)
+                if (entry.Key == null) _destroyedInstances.Add(entry.Key);
+
+            foreach (var instance in _destroyedInstances)
+            {
+                _instances[instance].Dispose();
+                _instances.Remove(instance);
+            }
+            _destroyedInstances.Clear();
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+            // ProjectContext owns this provider; disposal happens on application shutdown.
+            foreach (var entry in _instances)
+            {
+                ReleaseInstance(entry.Key);
+                ReleaseAfterDestructionAsync(entry.Key, entry.Value).Forget(Debug.LogException);
+            }
+            _instances.Clear();
+            _destroyedInstances.Clear();
+        }
+
+        private static async UniTask ReleaseAfterDestructionAsync(GameObject instance, AssetLease<GameObject> lease)
+        {
+            if (instance != null) await UniTask.WaitUntil(() => instance == null);
+            lease.Dispose();
+        }
+
+        private void ThrowIfDisposed()
+        {
+            if (_disposed) throw new ObjectDisposedException(nameof(AssetProvider));
+        }
     }
 }

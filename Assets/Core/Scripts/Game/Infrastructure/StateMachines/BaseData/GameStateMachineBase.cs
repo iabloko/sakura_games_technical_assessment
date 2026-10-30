@@ -9,6 +9,13 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.BaseData
         protected Dictionary<Type, IExitState> States;
         private IExitState ActiveState { get; set; }
 
+        public void Stop()
+        {
+            var state = ActiveState;
+            ActiveState = null;
+            state?.Exit();
+        }
+
         public virtual void Enter<TState>() where TState : class, IState
         {
             IState state = ChangeState<TState>();

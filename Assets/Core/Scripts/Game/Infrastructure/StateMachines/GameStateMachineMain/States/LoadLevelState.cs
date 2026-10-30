@@ -1,4 +1,7 @@
 using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 using Core.Scripts.Game.Infrastructure.Loader;
 using Core.Scripts.Game.Infrastructure.StateMachines.DataInterfaces;
 using Core.Scripts.Game.Infrastructure.StateMachines.GameStateMachineMain.States.Base;
@@ -24,19 +27,38 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.GameStateMachineMain.St
         public override string StateName => "LoadLevelState";
 
         private readonly SceneLoader _sceneLoader;
+        private CancellationTokenSource _loadCancellation;
 
-        public LoadLevelState(GameStateMachine gameGameStateMachineBase) : base(gameGameStateMachineBase)
+        public LoadLevelState(GameStateMachine gameGameStateMachineBase, SceneLoader sceneLoader) : base(gameGameStateMachineBase)
         {
-            _sceneLoader = new SceneLoader();
+            _sceneLoader = sceneLoader;
         }
 
         public override void Enter(LoadLevelData payload)
         {
-            _sceneLoader.MmSceneLoad(payload.NextSceneName, payload.OnSceneLoaded).Forget();
+            _loadCancellation = new CancellationTokenSource();
+            LoadAsync(payload, _loadCancellation.Token).Forget(Debug.LogException);
+        }
+
+        private async UniTask LoadAsync(LoadLevelData payload, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _sceneLoader.LoadAsync(payload.NextSceneName, cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                payload.OnSceneLoaded?.Invoke();
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // The state has exited; the completed native load must not trigger a transition.
+            }
         }
 
         public override void Exit()
         {
+            _loadCancellation?.Cancel();
+            _loadCancellation?.Dispose();
+            _loadCancellation = null;
         }
         
         [Preserve]

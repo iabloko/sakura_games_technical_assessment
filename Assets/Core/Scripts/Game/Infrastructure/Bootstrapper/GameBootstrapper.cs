@@ -1,10 +1,11 @@
+using System;
 using Core.Scripts.Game.Infrastructure.StateMachines.GameStateMachineMain;
 using Core.Scripts.Game.Infrastructure.StateMachines.GameStateMachineMain.States;
 using Zenject;
 
 namespace Core.Scripts.Game.Infrastructure.Bootstrapper
 {
-    public sealed class GameBootstrapper : IInitializable
+    public sealed class GameBootstrapper : IInitializable, IDisposable
     {
         private readonly GameStateMachine _machine;
         
@@ -12,5 +13,7 @@ namespace Core.Scripts.Game.Infrastructure.Bootstrapper
         public GameBootstrapper(GameStateMachine gameStateMachine) => _machine = gameStateMachine;
 
         public void Initialize() => _machine.Enter<BootStrapState>();
+
+        public void Dispose() => _machine.Stop();
     }
 }
