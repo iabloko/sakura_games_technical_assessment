@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07eb843ecffd5e846990511c542a4ae0, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
+  _animals:
+  - {fileID: 11400000, guid: c311a6b03fe8a38d06facf90c16549fa, type: 2}
+  - {fileID: 11400000, guid: c6d32e25e5a03cce9f02f3c43fa70dee, type: 2}
   transitionSceneType: 0
   settings:
     verticalSync: 1
