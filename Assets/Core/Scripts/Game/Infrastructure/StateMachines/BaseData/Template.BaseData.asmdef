@@ -1,0 +1,21 @@
+{
+    "name": "Template.BaseData",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b9617bf0454efbd4180064eda9334e43",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:5c01796d064528144a599661eaab93a6",
+        "GUID:dc47925d1a5fa2946bdd37746b2b5d48",
+        "GUID:4129704b5a1a13841ba16f230bf24a57",
+        "GUID:d0aa614c068a6f34b8a562499967cf74"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

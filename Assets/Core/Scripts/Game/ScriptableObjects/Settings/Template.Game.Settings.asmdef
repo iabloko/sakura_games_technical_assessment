@@ -1,0 +1,16 @@
+{
+    "name": "Template.Game.Settings",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3a8528f7e76abb74baee4258f650a672"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

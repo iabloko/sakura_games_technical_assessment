@@ -1,0 +1,338 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adb9c12a8c6c949f7af83a3d238359d0, type: 3}
+  m_Name: vFolders Data
+  m_EditorClassIdentifier: 
+  folderDatas_byGuid:
+    keys:
+    - 019171bd4f5f4954ac4d91b7697a8923
+    - 1076032aea735f343a3102111d9474e0
+    - 842d5eaf7c64dfc41a2228e44f9f6af9
+    - 72aaea132b060704994e877c105e2293
+    - 2fd372d35ecd75641a57647ed04d2375
+    - 12538987f08948547a7a4f3118cc024c
+    - 8a4b39f12c40c48b98abd27c2f3774ca
+    - 1b106a567fd826f4cb286b57e6f37cf5
+    - 51b12851c21dca744b84c03677f1c5f9
+    - 1d4b49fbec76c8145b90fc54167bb5d3
+    - 285812f05fd13ef46a3ebc5ccd32603b
+    - 115e9a87669ff8641b48c627cf3d14e2
+    - f2acd3f924ae69c44b7aadb54e686d44
+    - 67e14afaf97d58f4a881ac0b3449515e
+    - e89679c9bc156854690a18900c291dc4
+    - b92804457a42bfd4d9f53b9a5cdb7fbb
+    - 872b65dd053fa5a458c0cba22f6d9bd6
+    - cc5f9f480bd0ae64f84422c9f5a85114
+    - e53f9273c307ee94ebaa62f7771520c6
+    - e4ca82b866eb8784195af6879a7d72ce
+    - 81c0fa95d70b85a4080b5baeb333138c
+    - be768c64c4864d54f9393bece26c3a33
+    - 12f6f5e196d82f34b9c361dfebd00bfc
+    - 49017608d5359db42a46eea9ed41ac00
+    - 8b48de5efe0ff92478789cbb86919a86
+    - bef4e78212b5f474cba87c1f74fa4a36
+    - 063a368fa2a5c87469e281a7fb40b262
+    - be3d2664677b5904c9f89a09e0f057e5
+    - 1f4ca14ab2c37434899fcd9db11713a5
+    - 850ee22a4819e5a43b57799b7962993c
+    - d09d01ed33a8e69449fa491b5cded29f
+    - e9f693669af91aa45ad615fc681ed29f
+    - 7dfb0159ad24cd949bf4d88e5b225a66
+    - 6d11ec87c6db49d40af874a49810f377
+    - 4c3e8dde5830470469f5db249b2e8db3
+    - 4ffe25f5498e3c84188dcf68efebe3ed
+    - 99a69d0c41ae80a4c8356437492fa042
+    - 754b95703bd76fb49a5866df6c80cc00
+    - 4da6d725aed9404438893c6407e322b9
+    - 243e06394e614e5d99fab26083b707fa
+    - 3535c999fba16d9438c05ad55806d913
+    - 6ea315d0fd7389c41b19996891e99ae3
+    - b0db70d67f6015e479ec2a9dece53379
+    - 710c4bec5b034b6c80e1c35692a5195e
+    - fec4485a26ea341bb82d1ccb36809139
+    - 216f79b756d98459f8e8098e89b8b05c
+    - 414d7b77f6dab471d9fdf3586b8236be
+    - 12a59e2eecf096f4b8bb9755141b626c
+    - ae79b0add7dd79d4fb80a6248378936c
+    - cd61f74aa23736b45a3230ec6d9628fe
+    - 95ab0e6f6cd3bba419451f95fb86d7b3
+    - aa39a6d8a3da93746ac4cb7d2d855a83
+    - a639e563a49410244b7900a05e34ea64
+    - 8b8da03380ace9c49857e51ad1c16405
+    - bf711cf84f4ecd74eaee5d05bbb8df3a
+    - d3814f72c84384845b23752e8f794746
+    - 351b8eefa1292e24d86de022b90e9ab9
+    - d7bac0379a244f6408b46d1200f9d9fa
+    - 1b02a6f6e7e89754491b45bbe698fae1
+    - 40629e74c90a8cd469bbdb960e62b590
+    - e42fc0abd581d2849b77905a5b703c3a
+    - 58ce8b2ff4b7bcf4f8e9e8db3d0e333d
+    - 9a3798fca9e37a34cb6a7c65ee3f89a5
+    - fba942bdd42eca340a5fe25882320d86
+    values:
+    - iconNameOrGuid: FreeformLayoutGroup Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Flare On Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Mesh Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: PreMatCube
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Folder Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Folder Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: ScriptableObject Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: ScriptableObject Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: FreeformLayoutGroup Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: FreeformLayoutGroup Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: FreeformLayoutGroup Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: 
+      colorIndex: 10
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: PreMatCube
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: PreMatCube
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: PreMatCube
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: PreMatCube
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: PreMatCube
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Shader Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Shader Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Shader Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Shader Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: SceneAsset Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: PreMatCube
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: FreeformLayoutGroup Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Settings Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Texture Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Sprite Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Font Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Material On Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: AnimationClip Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: FreeformLayoutGroup Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Folder Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Profiler.Memory
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: Settings Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: SceneAsset Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: PreMatCube
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: AssetStore Icon
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: WaitSpin00
+      colorIndex: 0
+      isIconRecursive: 0
+      isColorRecursive: 0
+  bookmarks: []

@@ -1,0 +1,22 @@
+{
+    "name": "Template.StateMachine.Tests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0c114db04f65d8344b1b19b5d6ce00b4",
+        "GUID:d0aa614c068a6f34b8a562499967cf74",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
