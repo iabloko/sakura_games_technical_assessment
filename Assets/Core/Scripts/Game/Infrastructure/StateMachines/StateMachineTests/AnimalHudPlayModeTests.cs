@@ -161,6 +161,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             {
                 var container = ProjectContext.Instance.Container;
                 _assets = new AssetProvider(container);
+                container.BindInstance<IAssetProvider>(_assets);
                 _factory = new AnimalFactory(_assets, Resolver, new AnimalMovementFactory());
                 container.BindInstance<IAnimalFactory>(_factory);
                 container.BindInstance(AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/Core/Settings/Configs/GameConfig.asset"));

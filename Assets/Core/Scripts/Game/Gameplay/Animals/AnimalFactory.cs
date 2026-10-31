@@ -57,7 +57,7 @@ namespace Core.Scripts.Game.Gameplay.Animals
             }
         }
 
-        private static void ValidateDefinition(AnimalDefinition definition)
+        public static void ValidateDefinition(AnimalDefinition definition)
         {
             if (definition == null) throw new ArgumentNullException(nameof(definition));
             if (string.IsNullOrWhiteSpace(definition.Id))

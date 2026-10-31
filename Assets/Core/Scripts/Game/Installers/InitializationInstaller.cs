@@ -31,6 +31,7 @@ namespace Core.Scripts.Game.Installers
         {
             Container.BindFactory<GameStateMachine, BootStrapState, BootStrapState.Factory>().AsSingle();
             Container.BindFactory<GameStateMachine, LoadLevelState, LoadLevelState.Factory>().AsSingle();
+            Container.BindFactory<GameStateMachine, WorldGenerationState, WorldGenerationState.Factory>().AsSingle();
             Container.BindFactory<GameStateMachine, GamePlayState, GamePlayState.Factory>().AsSingle();
 
             Container.Bind<GameStateMachine>().AsSingle().NonLazy();

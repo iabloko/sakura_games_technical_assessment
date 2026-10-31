@@ -8,6 +8,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.BaseData
     {
         protected Dictionary<Type, IExitState> States;
         private IExitState ActiveState { get; set; }
+        public Type CurrentStateType => ActiveState?.GetType();
 
         public void Stop()
         {

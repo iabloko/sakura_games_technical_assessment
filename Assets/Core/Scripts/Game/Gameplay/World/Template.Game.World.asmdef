@@ -1,0 +1,4 @@
+{
+    "name": "Template.Game.World",
+    "references": ["Template.Game.Animals", "Template.Game.UI", "Template.Game.Configuration", "Template.AssetProveder", "Zenject"]
+}

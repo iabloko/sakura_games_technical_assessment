@@ -13,12 +13,14 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.GameStateMachineMain
         public GameStateMachine(
             BootStrapState.Factory bootFactory,
             LoadLevelState.Factory loadLevelFactory,
+            WorldGenerationState.Factory worldGenerationFactory,
             GamePlayState.Factory gamePlayFactory)
         {
             States = new Dictionary<Type, IExitState>
             {
                 [typeof(BootStrapState)] = bootFactory.Create(this),
                 [typeof(LoadLevelState)] = loadLevelFactory.Create(this),
+                [typeof(WorldGenerationState)] = worldGenerationFactory.Create(this),
                 [typeof(GamePlayState)] = gamePlayFactory.Create(this),
             };
         }

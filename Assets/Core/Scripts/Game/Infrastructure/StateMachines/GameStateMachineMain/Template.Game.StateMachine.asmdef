@@ -1,0 +1,4 @@
+{
+    "name": "Template.Game.StateMachine",
+    "references": ["Template.BaseData", "Template.DataInterfaces", "Template.StateMachines.SceneLoader", "Template.Game.Helpers", "Template.Game.World", "Zenject", "UniTask"]
+}

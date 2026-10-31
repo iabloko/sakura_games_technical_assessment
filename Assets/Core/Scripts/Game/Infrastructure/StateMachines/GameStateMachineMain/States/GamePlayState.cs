@@ -1,8 +1,7 @@
-using Core.Scripts.Game.Infrastructure.Services.AssetProviderService;
+using System;
+using Core.Scripts.Game.Gameplay.World;
 using Core.Scripts.Game.Infrastructure.StateMachines.DataInterfaces;
 using Core.Scripts.Game.Infrastructure.StateMachines.GameStateMachineMain.States.Base;
-using Cysharp.Threading.Tasks;
-using UnityEngine;
 using UnityEngine.Scripting;
 using Zenject;
 
@@ -10,32 +9,41 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.GameStateMachineMain.St
 {
     public struct GamePlayStateData : IData
     {
+        public readonly GameWorld World;
+
+        public GamePlayStateData(GameWorld world) => World = world;
     }
 
     public sealed class GamePlayState : PayloadStateBase<GamePlayStateData>
     {
-        private readonly IAssetProvider _assetProvider;
+        private GameWorld _world;
         
-        public GamePlayState(GameStateMachine gameGameStateMachineBase, IAssetProvider assetProvider) : base(gameGameStateMachineBase)
+        public GamePlayState(GameStateMachine gameGameStateMachineBase) : base(gameGameStateMachineBase)
         {
-            _assetProvider = assetProvider;
         }
 
         public override string StateName => "GamePlayState";
 
         public override void Enter(GamePlayStateData data)
         {
-            InitializeGame().Forget();
-        }
-
-        private async UniTaskVoid InitializeGame()
-        {
-            await UniTask.Yield();
-            Debug.Log("InitializeGame");
+            if (data.World == null) throw new ArgumentException("Gameplay requires a prepared world.", nameof(data));
+            try
+            {
+                data.World.StartSession();
+                _world = data.World;
+            }
+            catch
+            {
+                data.World.EndSession();
+                throw;
+            }
         }
         
         public override void Exit()
         {
+            var world = _world;
+            _world = null;
+            if (world != null) world.EndSession();
         }
         
         [Preserve]

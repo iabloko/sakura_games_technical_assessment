@@ -153,6 +153,21 @@ namespace Core.Scripts.Game.Gameplay.UI
         {
             if (_source != null) _source.Spawned -= ObserveAnimal;
             Statistics?.Dispose();
+            ClearObservers();
+        }
+
+        public void ResetSession()
+        {
+            if (Statistics == null) throw new InvalidOperationException("The animal HUD has not been initialized.");
+            Statistics.Dispose();
+            ClearObservers();
+            Statistics = new AnimalDeathStatistics();
+            Statistics.Changed += RefreshCounters;
+            RefreshCounters();
+        }
+
+        private void ClearObservers()
+        {
             foreach (var animal in _predators)
             {
                 if (animal == null) continue;

@@ -52,6 +52,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             yield return new EnterPlayMode();
             var container = ProjectContext.Instance.Container;
             using var assets = new AssetProvider(container);
+            container.BindInstance<IAssetProvider>(assets);
             var config = AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/Core/Settings/Configs/GameConfig.asset");
             container.BindInstance(config);
             container.BindInstance<IAnimalFactory>(
@@ -65,6 +66,8 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
                 .SelectMany(root => root.GetComponentsInChildren<Camera>(true)).Single();
             var counter = new SpawnCounter();
             controller.Spawned += counter.OnSpawned;
+            Assert.That(controller.IsRunning, Is.False, "The game state owns scene spawning.");
+            controller.StartSpawning();
             yield return WaitForSpawn(counter, 1);
 
             Assert.That(controller.IsRunning, Is.True);
