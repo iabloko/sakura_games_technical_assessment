@@ -21,6 +21,7 @@ namespace Core.Scripts.Game.Installers
         {
             Container.BindInterfacesTo<AssetProvider>().AsSingle().NonLazy();
             Container.Bind<SceneLoader>().AsSingle();
+            Container.Bind<AnimalInteractionResolver>().AsSingle();
             Container.Bind<IAnimalFactory>().To<AnimalFactory>().AsSingle();
         }
 

@@ -102,6 +102,7 @@ GameObject:
   - component: {fileID: 5876074166800228524}
   - component: {fileID: 1719085916329053394}
   - component: {fileID: 6054118518516034011}
+  - component: {fileID: 8445703293233310833}
   m_Layer: 0
   m_Name: Frog
   m_TagString: Untagged
@@ -159,7 +160,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4972147871462669881}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 202c171bb6f3f1e4b9e3dc299a54b983, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -186,3 +187,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Template.Game.Animals::Core.Scripts.Game.Gameplay.Animals.Animal
   _visual: {fileID: 7632910407418870404}
+--- !u!114 &8445703293233310833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4972147871462669881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf4d70424d5ae175a317ce491c2a90be, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Template.Game.Animals::Core.Scripts.Game.Gameplay.Animals.AnimalCollisionHandler

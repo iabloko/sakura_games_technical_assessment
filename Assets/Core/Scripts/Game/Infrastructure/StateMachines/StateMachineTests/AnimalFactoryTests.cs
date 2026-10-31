@@ -21,7 +21,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public void SetUp()
         {
             _assets = new AssetProvider(new DiContainer());
-            _factory = new AnimalFactory(_assets);
+            _factory = new AnimalFactory(_assets, new AnimalInteractionResolver());
         }
 
         [TearDown]

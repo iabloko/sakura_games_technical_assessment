@@ -8,9 +8,14 @@ namespace Core.Scripts.Game.Gameplay.Animals
     public sealed class AnimalFactory : IAnimalFactory
     {
         private readonly IAssetProvider _assetProvider;
+        private readonly AnimalInteractionResolver _interactionResolver;
         private long _nextId;
 
-        public AnimalFactory(IAssetProvider assetProvider) => _assetProvider = assetProvider;
+        public AnimalFactory(IAssetProvider assetProvider, AnimalInteractionResolver interactionResolver)
+        {
+            _assetProvider = assetProvider;
+            _interactionResolver = interactionResolver ?? throw new ArgumentNullException(nameof(interactionResolver));
+        }
 
         public Animal Create(AnimalDefinition definition, Vector3 position, Transform parent = null)
         {
@@ -26,6 +31,7 @@ namespace Core.Scripts.Game.Gameplay.Animals
                 instance.SetActive(false);
                 var animal = instance.GetComponent<Animal>();
                 animal.Initialize(++_nextId, definition, _assetProvider.ReleaseInstance);
+                instance.GetComponent<AnimalCollisionHandler>().Initialize(animal, _interactionResolver);
 
                 instance.name = $"{definition.Id} ({animal.Id})";
                 instance.transform.SetParent(parent, false);
@@ -57,6 +63,8 @@ namespace Core.Scripts.Game.Gameplay.Animals
                 throw new InvalidOperationException($"Animal '{definition.Id}' has no prefab.");
             if (!prefab.TryGetComponent<Animal>(out _))
                 throw new InvalidOperationException($"Prefab '{prefab.name}' requires an Animal on its root.");
+            if (!prefab.TryGetComponent<AnimalCollisionHandler>(out _))
+                throw new InvalidOperationException($"Prefab '{prefab.name}' requires an AnimalCollisionHandler on its root.");
             if (!prefab.TryGetComponent<Rigidbody>(out var body) || body.isKinematic)
                 throw new InvalidOperationException($"Prefab '{prefab.name}' requires a dynamic Rigidbody on its root.");
 

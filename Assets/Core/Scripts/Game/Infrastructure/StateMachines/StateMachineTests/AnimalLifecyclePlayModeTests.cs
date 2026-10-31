@@ -18,7 +18,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         {
             yield return new EnterPlayMode();
             using var assets = new AssetProvider(new DiContainer());
-            var factory = new AnimalFactory(assets);
+            var factory = new AnimalFactory(assets, new AnimalInteractionResolver());
             var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>(
                 "Assets/Core/Settings/Configs/Animals/Frog.asset");
             var animal = factory.Create(definition, Vector3.zero);
@@ -41,7 +41,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         {
             yield return new EnterPlayMode();
             using var assets = new AssetProvider(new DiContainer());
-            var factory = new AnimalFactory(assets);
+            var factory = new AnimalFactory(assets, new AnimalInteractionResolver());
             var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>(
                 "Assets/Core/Settings/Configs/Animals/Snake.asset");
             var scene = SceneManager.CreateScene("Animal lifecycle test");
