@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: FrogJumpMovement
   m_EditorClassIdentifier: 
   _distance: 2
+  _directionChangeInterval: 2
+  _acceleration: 10
   _interval: 1
   _duration: 0.3
   _height: 0.5

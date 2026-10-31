@@ -9,6 +9,10 @@ namespace Core.Scripts.Game.ScriptableObjects.Configs.Animals
 
         public float Speed => _speed;
 
-        private void OnValidate() => _speed = Mathf.Max(0.01f, _speed);
+        protected override void OnValidate()
+        {
+            base.OnValidate();
+            _speed = Mathf.Max(0.01f, _speed);
+        }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Core.Scripts.Game.Gameplay.Animals;
+using Core.Scripts.Game.Gameplay.Animals.Movement;
 using Core.Scripts.Game.Infrastructure.Services.AssetProviderService;
 using Core.Scripts.Game.ScriptableObjects.Configs.Animals;
 using NUnit.Framework;
@@ -22,7 +23,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         {
             _assets = new AssetProvider(new DiContainer());
             _resolver = new AnimalInteractionResolver();
-            _factory = new AnimalFactory(_assets, _resolver);
+            _factory = new AnimalFactory(_assets, _resolver, new AnimalMovementFactory());
         }
 
         [TearDown]

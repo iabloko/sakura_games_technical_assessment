@@ -1,4 +1,5 @@
 using System;
+using Core.Scripts.Game.Gameplay.Animals.Movement;
 using Core.Scripts.Game.Infrastructure.Services.AssetProviderService;
 using Core.Scripts.Game.ScriptableObjects.Configs.Animals;
 using UnityEngine;
@@ -9,15 +10,19 @@ namespace Core.Scripts.Game.Gameplay.Animals
     {
         private readonly IAssetProvider _assetProvider;
         private readonly AnimalInteractionResolver _interactionResolver;
+        private readonly AnimalMovementFactory _movementFactory;
         private long _nextId;
 
-        public AnimalFactory(IAssetProvider assetProvider, AnimalInteractionResolver interactionResolver)
+        public AnimalFactory(IAssetProvider assetProvider, AnimalInteractionResolver interactionResolver,
+            AnimalMovementFactory movementFactory)
         {
             _assetProvider = assetProvider;
             _interactionResolver = interactionResolver ?? throw new ArgumentNullException(nameof(interactionResolver));
+            _movementFactory = movementFactory ?? throw new ArgumentNullException(nameof(movementFactory));
         }
 
-        public Animal Create(AnimalDefinition definition, Vector3 position, Transform parent = null)
+        public Animal Create(AnimalDefinition definition, Vector3 position, Transform parent = null,
+            IAnimalMovementBounds movementBounds = null)
         {
             ValidateDefinition(definition);
 
@@ -31,6 +36,8 @@ namespace Core.Scripts.Game.Gameplay.Animals
                 instance.SetActive(false);
                 var animal = instance.GetComponent<Animal>();
                 animal.Initialize(++_nextId, definition, _assetProvider.ReleaseInstance);
+                instance.GetComponent<AnimalMovementController>().Initialize(animal,
+                    _movementFactory.Create(animal), movementBounds);
                 instance.GetComponent<AnimalCollisionHandler>().Initialize(animal, _interactionResolver);
 
                 instance.name = $"{definition.Id} ({animal.Id})";
@@ -65,6 +72,8 @@ namespace Core.Scripts.Game.Gameplay.Animals
                 throw new InvalidOperationException($"Prefab '{prefab.name}' requires an Animal on its root.");
             if (!prefab.TryGetComponent<AnimalCollisionHandler>(out _))
                 throw new InvalidOperationException($"Prefab '{prefab.name}' requires an AnimalCollisionHandler on its root.");
+            if (!prefab.TryGetComponent<AnimalMovementController>(out _))
+                throw new InvalidOperationException($"Prefab '{prefab.name}' requires an AnimalMovementController on its root.");
             if (!prefab.TryGetComponent<Rigidbody>(out var body) || body.isKinematic)
                 throw new InvalidOperationException($"Prefab '{prefab.name}' requires a dynamic Rigidbody on its root.");
 

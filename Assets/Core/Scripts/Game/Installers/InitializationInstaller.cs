@@ -1,4 +1,5 @@
 using Core.Scripts.Game.Gameplay.Animals;
+using Core.Scripts.Game.Gameplay.Animals.Movement;
 using Core.Scripts.Game.Infrastructure.Bootstrapper;
 using Core.Scripts.Game.Infrastructure.Loader;
 using Core.Scripts.Game.Infrastructure.Services.AssetProviderService;
@@ -22,6 +23,7 @@ namespace Core.Scripts.Game.Installers
             Container.BindInterfacesTo<AssetProvider>().AsSingle().NonLazy();
             Container.Bind<SceneLoader>().AsSingle();
             Container.Bind<AnimalInteractionResolver>().AsSingle();
+            Container.Bind<AnimalMovementFactory>().AsSingle();
             Container.Bind<IAnimalFactory>().To<AnimalFactory>().AsSingle();
         }
 

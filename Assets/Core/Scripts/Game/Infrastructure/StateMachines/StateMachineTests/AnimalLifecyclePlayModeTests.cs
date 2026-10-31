@@ -1,5 +1,6 @@
 using System.Collections;
 using Core.Scripts.Game.Gameplay.Animals;
+using Core.Scripts.Game.Gameplay.Animals.Movement;
 using Core.Scripts.Game.Infrastructure.Services.AssetProviderService;
 using Core.Scripts.Game.ScriptableObjects.Configs.Animals;
 using NUnit.Framework;
@@ -18,7 +19,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         {
             yield return new EnterPlayMode();
             using var assets = new AssetProvider(new DiContainer());
-            var factory = new AnimalFactory(assets, new AnimalInteractionResolver());
+            var factory = new AnimalFactory(assets, new AnimalInteractionResolver(), new AnimalMovementFactory());
             var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>(
                 "Assets/Core/Settings/Configs/Animals/Frog.asset");
             var animal = factory.Create(definition, Vector3.zero);
@@ -41,7 +42,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         {
             yield return new EnterPlayMode();
             using var assets = new AssetProvider(new DiContainer());
-            var factory = new AnimalFactory(assets, new AnimalInteractionResolver());
+            var factory = new AnimalFactory(assets, new AnimalInteractionResolver(), new AnimalMovementFactory());
             var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>(
                 "Assets/Core/Settings/Configs/Animals/Snake.asset");
             var scene = SceneManager.CreateScene("Animal lifecycle test");

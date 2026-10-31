@@ -17,8 +17,9 @@ namespace Core.Scripts.Game.ScriptableObjects.Configs.Animals
         public float Duration => _duration;
         public float Height => _height;
 
-        private void OnValidate()
+        protected override void OnValidate()
         {
+            base.OnValidate();
             _distance = Mathf.Max(0.01f, _distance);
             _interval = Mathf.Max(0.01f, _interval);
             _duration = Mathf.Clamp(_duration, 0.01f, _interval);

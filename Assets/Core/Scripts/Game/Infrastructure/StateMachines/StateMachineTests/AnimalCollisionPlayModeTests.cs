@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Core.Scripts.Game.Gameplay.Animals;
+using Core.Scripts.Game.Gameplay.Animals.Movement;
 using Core.Scripts.Game.Infrastructure.Services.AssetProviderService;
 using Core.Scripts.Game.ScriptableObjects.Configs.Animals;
 using NUnit.Framework;
@@ -137,7 +138,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             private readonly List<Object> _owned = new();
             public ContactEvents Events { get; } = new();
 
-            public CollisionWorld() => _factory = new AnimalFactory(_assets, new AnimalInteractionResolver());
+            public CollisionWorld() => _factory = new AnimalFactory(_assets, new AnimalInteractionResolver(), new AnimalMovementFactory());
 
             public Animal Create(string species, Vector3 position)
             {
@@ -149,6 +150,8 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             public Animal Create(AnimalDefinition definition, Vector3 position)
             {
                 var animal = _factory.Create(definition, position);
+                // These tests isolate contact rules; movement/physics integration has its own fixture.
+                animal.GetComponent<AnimalMovementController>().enabled = false;
                 Own(animal.gameObject);
                 Events.Observe(animal);
                 return animal;

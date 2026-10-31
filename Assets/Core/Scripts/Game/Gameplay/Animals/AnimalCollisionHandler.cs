@@ -1,4 +1,5 @@
 using System;
+using Core.Scripts.Game.Gameplay.Animals.Movement;
 using UnityEngine;
 
 namespace Core.Scripts.Game.Gameplay.Animals
@@ -9,11 +10,13 @@ namespace Core.Scripts.Game.Gameplay.Animals
     {
         private Animal _owner;
         private AnimalInteractionResolver _resolver;
+        private AnimalMovementController _movement;
 
         internal void Initialize(Animal owner, AnimalInteractionResolver resolver)
         {
             _owner = owner != null ? owner : throw new ArgumentNullException(nameof(owner));
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+            _movement = owner.GetComponent<AnimalMovementController>();
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -25,6 +28,8 @@ namespace Core.Scripts.Game.Gameplay.Animals
             var otherBody = collision.rigidbody;
             if (otherBody != null && otherBody.TryGetComponent<Animal>(out var other))
                 _resolver.TryResolve(_owner, other);
+            if (_owner != null && _owner.IsAlive && _movement != null && collision.contactCount > 0)
+                _movement.HandleCollision(collision.GetContact(0).normal);
         }
     }
 }

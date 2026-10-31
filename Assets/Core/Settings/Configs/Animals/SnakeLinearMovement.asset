@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: SnakeLinearMovement
   m_EditorClassIdentifier: 
   _speed: 2
+  _directionChangeInterval: 2
+  _acceleration: 10
