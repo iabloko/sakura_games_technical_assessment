@@ -1,6 +1,7 @@
 {
     "name": "Template.Game.Animals",
     "references": [
+        "GUID:0d8beb7f090555447a6cf5ce9e54dbb4",
         "GUID:3a8528f7e76abb74baee4258f650a672",
         "GUID:d0aa614c068a6f34b8a562499967cf74"
     ]
