@@ -49,6 +49,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             predator.transform.position += Vector3.right;
             yield return AdvanceTime(0.05f);
             Assert.That(label.rectTransform.position.x, Is.GreaterThan(initialX));
+            AssertLabelBelowVisual(world.Camera, predator, label);
             yield return AdvanceTime(1.1f);
             Assert.That(world.MealTexts(), Is.Empty);
         }
@@ -144,6 +145,22 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             var deadline = EditorApplication.timeSinceStartup + 10f;
             while (Time.timeAsDouble < target && EditorApplication.timeSinceStartup < deadline) yield return null;
             Assert.That(Time.timeAsDouble, Is.GreaterThanOrEqualTo(target));
+        }
+
+        private static void AssertLabelBelowVisual(Camera camera, Animal animal, Text label)
+        {
+            var bounds = new Bounds(animal.Visual.position, Vector3.zero);
+            foreach (var renderer in animal.Visual.GetComponentsInChildren<Renderer>()) bounds.Encapsulate(renderer.bounds);
+            var bottom = float.PositiveInfinity;
+            for (var corner = 0; corner < 8; corner++)
+            {
+                var point = bounds.center + Vector3.Scale(bounds.extents, new Vector3(
+                    (corner & 1) == 0 ? -1 : 1, (corner & 2) == 0 ? -1 : 1, (corner & 4) == 0 ? -1 : 1));
+                bottom = Mathf.Min(bottom, camera.WorldToScreenPoint(point).y);
+            }
+            var corners = new Vector3[4];
+            label.rectTransform.GetWorldCorners(corners);
+            Assert.That(corners[1].y, Is.LessThan(bottom), "The caption must be below the entire multi-part animal visual.");
         }
 
         private sealed class HudWorld : IDisposable

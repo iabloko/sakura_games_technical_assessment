@@ -15,10 +15,4 @@ MonoBehaviour:
   _animals:
   - {fileID: 11400000, guid: c311a6b03fe8a38d06facf90c16549fa, type: 2}
   - {fileID: 11400000, guid: c6d32e25e5a03cce9f02f3c43fa70dee, type: 2}
-  _minSpawnInterval: 1
-  _maxSpawnInterval: 2
-  transitionSceneType: 0
-  settings:
-    verticalSync: 1
-    fpsLock: 60
-  charactersList: {fileID: 11400000, guid: eebba1cde57e19041aff6ddfd958f017, type: 2}
+  _minMaxInterval: {x: 1, y: 2}

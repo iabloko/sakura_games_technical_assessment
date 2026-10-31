@@ -56,8 +56,8 @@ namespace Core.Scripts.Game.Gameplay.UI
                 var text = Instantiate(_tastyTemplate, _labelRoot);
                 text.text = "Tasty!";
                 text.gameObject.SetActive(true);
-                var renderer = eater.Visual != null ? eater.Visual.GetComponentInChildren<Renderer>() : null;
-                label = new MealLabel(text, renderer);
+                var renderers = eater.Visual != null ? eater.Visual.GetComponentsInChildren<Renderer>() : Array.Empty<Renderer>();
+                label = new MealLabel(text, renderers);
                 _labels.Add(eater, label);
             }
             label.Remaining = _labelDuration;
@@ -92,9 +92,17 @@ namespace Core.Scripts.Game.Gameplay.UI
             label.Text.enabled = screen.z > 0f && animal.gameObject.activeInHierarchy;
             if (!label.Text.enabled) return;
 
-            if (label.Renderer != null)
+            var hasBounds = false;
+            var bounds = new Bounds();
+            foreach (var renderer in label.Renderers)
             {
-                var bounds = label.Renderer.bounds;
+                if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy) continue;
+                if (!hasBounds) bounds = renderer.bounds;
+                else bounds.Encapsulate(renderer.bounds);
+                hasBounds = true;
+            }
+            if (hasBounds)
+            {
                 // Project the visible model bounds so the caption sits below the animal at any camera angle.
                 for (var corner = 0; corner < 8; corner++)
                 {
@@ -181,13 +189,13 @@ namespace Core.Scripts.Game.Gameplay.UI
         private sealed class MealLabel
         {
             public readonly Text Text;
-            public readonly Renderer Renderer;
+            public readonly Renderer[] Renderers;
             public float Remaining;
 
-            public MealLabel(Text text, Renderer renderer)
+            public MealLabel(Text text, Renderer[] renderers)
             {
                 Text = text;
-                Renderer = renderer;
+                Renderers = renderers;
             }
         }
     }

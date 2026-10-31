@@ -153,8 +153,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
                 var config = Object.Instantiate(source);
                 _owned.Add(config);
                 var serializedConfig = new SerializedObject(config);
-                serializedConfig.FindProperty("_minSpawnInterval").floatValue = 0.05f;
-                serializedConfig.FindProperty("_maxSpawnInterval").floatValue = 0.05f;
+                serializedConfig.FindProperty("_minMaxInterval").vector2Value = new Vector2(0.05f, 0.05f);
                 serializedConfig.FindProperty("_animals").arraySize = 1;
                 serializedConfig.ApplyModifiedPropertiesWithoutUndo();
                 Controller.Construct(new AnimalFactory(_assets, new AnimalInteractionResolver(), new AnimalMovementFactory()), config);
