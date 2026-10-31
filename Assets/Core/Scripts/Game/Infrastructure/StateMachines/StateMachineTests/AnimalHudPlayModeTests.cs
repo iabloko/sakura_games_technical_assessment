@@ -20,12 +20,20 @@ using Object = UnityEngine.Object;
 
 namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
 {
-    public sealed class AnimalHudPlayModeTests
+    public sealed class AnimalHudPlayModeTests : GamePlayModeTestFixture
     {
+
+        [UnityTearDown]
+        public IEnumerator ExitPlayModeAfterTest()
+        {
+            SceneContext.ParentContainers = null;
+            if (Application.isPlaying) yield return new ExitPlayMode();
+        }
         [UnityTest]
         public IEnumerator CountersAndMealLabelFollowConfirmedPredation()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new HudWorld();
             yield return world.Load();
             Assert.That(world.Text("Dead Prey").text, Is.EqualTo("Dead prey: 0"));
@@ -58,6 +66,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator RepeatedMealsRefreshOneLabelAndPredatorDeathRemovesIt()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new HudWorld();
             yield return world.Load();
             var predator = world.Create("Snake", Vector3.zero);
@@ -77,6 +86,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator HiddenHudKeepsStatisticsWithoutCreatingOverdueLabels()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new HudWorld();
             yield return world.Load();
             var predator = world.Create("Snake", Vector3.zero);
@@ -95,6 +105,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator ExternalRemovalDoesNotCountDeathAndSceneUnloadDisposesObservers()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new HudWorld();
             yield return world.Load();
             var predator = world.Create("Snake", Vector3.zero);
@@ -118,6 +129,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator RealSpawnerAutomaticallyRegistersAnimalsWithStatistics()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new HudWorld();
             yield return world.Load();
             world.Spawner.enabled = true;
@@ -131,12 +143,6 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             var counterPanel = world.Text("Dead Prey").transform.parent as RectTransform;
             Assert.That(counterPanel.anchorMax, Is.EqualTo(Vector2.one));
             Assert.That(counterPanel.pivot, Is.EqualTo(Vector2.one));
-        }
-
-        [UnityTearDown]
-        public IEnumerator ExitPlayModeAfterTest()
-        {
-            if (Application.isPlaying) yield return new ExitPlayMode();
         }
 
         private static IEnumerator AdvanceTime(float seconds)
@@ -176,12 +182,13 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
 
             public IEnumerator Load()
             {
-                var container = ProjectContext.Instance.Container;
+                var container = ProjectContext.Instance.Container.CreateSubContainer();
                 _assets = new AssetProvider(container);
                 container.BindInstance<IAssetProvider>(_assets);
                 _factory = new AnimalFactory(_assets, Resolver, new AnimalMovementFactory());
                 container.BindInstance<IAnimalFactory>(_factory);
                 container.BindInstance(AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/Core/Settings/Configs/GameConfig.asset"));
+                SceneContext.ParentContainers = new[] { container };
                 var loading = SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
                 var deadline = EditorApplication.timeSinceStartup + 10f;
                 while (!loading.isDone && EditorApplication.timeSinceStartup < deadline) yield return null;

@@ -12,12 +12,20 @@ using Zenject;
 
 namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
 {
-    public sealed class AnimalLifecyclePlayModeTests
+    public sealed class AnimalLifecyclePlayModeTests : GamePlayModeTestFixture
     {
+
+        [UnityTearDown]
+        public IEnumerator ExitPlayModeAfterTest()
+        {
+            SceneContext.ParentContainers = null;
+            if (Application.isPlaying) yield return new ExitPlayMode();
+        }
         [UnityTest]
         public IEnumerator Death_DisablesPhysicsImmediatelyAndDestroysOnNextFrame()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var assets = new AssetProvider(new DiContainer());
             var factory = new AnimalFactory(assets, new AnimalInteractionResolver(), new AnimalMovementFactory());
             var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>(
@@ -41,6 +49,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator SceneUnload_RemovesAnimalWithoutGameplayDeath()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var assets = new AssetProvider(new DiContainer());
             var factory = new AnimalFactory(assets, new AnimalInteractionResolver(), new AnimalMovementFactory());
             var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>(
@@ -55,12 +64,6 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
 
             Assert.That(animal == null, Is.True);
             Assert.That(deaths.Count, Is.Zero);
-        }
-
-        [UnityTearDown]
-        public IEnumerator ExitPlayModeAfterTest()
-        {
-            if (Application.isPlaying) yield return new ExitPlayMode();
         }
 
         // A captured local would be hoisted before EnterPlayMode and lost on domain reload.

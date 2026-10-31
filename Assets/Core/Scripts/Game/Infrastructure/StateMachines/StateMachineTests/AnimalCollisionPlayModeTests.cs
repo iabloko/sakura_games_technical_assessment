@@ -14,12 +14,20 @@ using Object = UnityEngine.Object;
 
 namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
 {
-    public sealed class AnimalCollisionPlayModeTests
+    public sealed class AnimalCollisionPlayModeTests : GamePlayModeTestFixture
     {
+
+        [UnityTearDown]
+        public IEnumerator ExitPlayModeAfterTest()
+        {
+            SceneContext.ParentContainers = null;
+            if (Application.isPlaying) yield return new ExitPlayMode();
+        }
         [UnityTest]
         public IEnumerator PreyPair_PhysicallyBouncesWithoutDeaths()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new CollisionWorld();
             var first = world.Create("Frog", new Vector3(0, 0, -1.5f));
             var second = world.Create("Frog", new Vector3(0, 0, 1.5f));
@@ -39,6 +47,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator PredatorPreyContact_ProducesOneDeathAndOneMeal()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new CollisionWorld();
             var prey = world.Create("Frog", new Vector3(0, 0, -1.5f));
             var predator = world.Create("Snake", new Vector3(0, 0, 1.5f));
@@ -60,6 +69,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator PredatorPair_LeavesOnlyTheOlderPredatorAlive()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new CollisionWorld();
             var older = world.Create("Snake", new Vector3(0, 0, -1.5f));
             var newer = world.Create("Snake", new Vector3(0, 0, 1.5f));
@@ -79,6 +89,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator ChildCollider_ResolvesItsOwningAnimal()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new CollisionWorld();
             var sourceDefinition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>(
                 "Assets/Core/Settings/Configs/Animals/Frog.asset");
@@ -110,6 +121,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator StaticObstacle_OnlyCausesPhysicalResponse()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new CollisionWorld();
             var obstacle = world.Own(GameObject.CreatePrimitive(PrimitiveType.Cube));
             obstacle.transform.position = new Vector3(0, 0, 0.75f);
@@ -123,12 +135,6 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             Assert.That(prey.Body.linearVelocity.z, Is.LessThan(0));
             Assert.That(world.Events.Deaths, Is.Zero);
             Assert.That(world.Events.Meals, Is.Zero);
-        }
-
-        [UnityTearDown]
-        public IEnumerator ExitPlayModeAfterTest()
-        {
-            if (Application.isPlaying) yield return new ExitPlayMode();
         }
 
         private sealed class CollisionWorld : IDisposable

@@ -17,12 +17,20 @@ using Object = UnityEngine.Object;
 
 namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
 {
-    public sealed class AnimalSpawnControllerPlayModeTests
+    public sealed class AnimalSpawnControllerPlayModeTests : GamePlayModeTestFixture
     {
+
+        [UnityTearDown]
+        public IEnumerator ExitPlayModeAfterTest()
+        {
+            SceneContext.ParentContainers = null;
+            if (Application.isPlaying) yield return new ExitPlayMode();
+        }
         [UnityTest]
         public IEnumerator DisableRestartAndSceneUnload_StopPendingSpawns()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new ControllerWorld();
             var scene = SceneManager.CreateScene("Spawner lifetime test");
             world.Create(scene);
@@ -50,7 +58,8 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator GameScene_ResolvesParentDependenciesAndSpawnsVisibleAnimals()
         {
             yield return new EnterPlayMode();
-            var container = ProjectContext.Instance.Container;
+            yield return StartWithStoppedProjectContext();
+            var container = ProjectContext.Instance.Container.CreateSubContainer();
             using var assets = new AssetProvider(container);
             container.BindInstance<IAssetProvider>(assets);
             var config = AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/Core/Settings/Configs/GameConfig.asset");
@@ -58,6 +67,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             container.BindInstance<IAnimalFactory>(
                 new AnimalFactory(assets, new AnimalInteractionResolver(), new AnimalMovementFactory()));
 
+            SceneContext.ParentContainers = new[] { container };
             yield return SceneManager.LoadSceneAsync("Game", LoadSceneMode.Additive);
             var scene = SceneManager.GetSceneByName("Game");
             var controller = scene.GetRootGameObjects()
@@ -82,12 +92,6 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             yield return AdvanceTime(0.2f);
             Assert.That(counter.Spawns, Is.EqualTo(count));
             yield return SceneManager.UnloadSceneAsync(scene);
-        }
-
-        [UnityTearDown]
-        public IEnumerator ExitPlayModeAfterTest()
-        {
-            if (Application.isPlaying) yield return new ExitPlayMode();
         }
 
         private static IEnumerator WaitForSpawn(SpawnCounter counter, int count)

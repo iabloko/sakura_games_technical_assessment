@@ -14,12 +14,20 @@ using Object = UnityEngine.Object;
 
 namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
 {
-    public sealed class AnimalMovementPlayModeTests
+    public sealed class AnimalMovementPlayModeTests : GamePlayModeTestFixture
     {
+
+        [UnityTearDown]
+        public IEnumerator ExitPlayModeAfterTest()
+        {
+            SceneContext.ParentContainers = null;
+            if (Application.isPlaying) yield return new ExitPlayMode();
+        }
         [UnityTest]
         public IEnumerator LinearMovement_ReachesConfiguredSpeedAndKeepsIt()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new MovementWorld();
             using var physics = new ManualPhysics();
             var body = world.CreateBody();
@@ -35,6 +43,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator JumpDistance_IsCorrectForWholeFractionalAndShortDurations()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new MovementWorld();
             using var physics = new ManualPhysics();
             foreach (var duration in new[] { 0.3f, 0.35f, 0.01f })
@@ -62,6 +71,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator ConsecutiveJumps_DoNotApplyLandingAndLaunchImpulsesTwice()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new MovementWorld();
             using var physics = new ManualPhysics();
             var settings = world.JumpSettings(0.3f, 0.3f);
@@ -75,6 +85,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator SharedJumpSettings_DoNotShareTimers()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new MovementWorld();
             using var physics = new ManualPhysics();
             var settings = world.JumpSettings(0.3f, 1f);
@@ -96,6 +107,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator JumpLanding_DoesNotEraseCollisionRecoil()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new MovementWorld();
             using var physics = new ManualPhysics();
             var body = world.CreateBody();
@@ -111,6 +123,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator MovingPrey_KeepPhysicalBounceAfterControllerUpdates()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new MovementWorld();
             var definition = world.LinearPrey();
             var first = world.Create(definition, new Vector3(-1.5f, 0, 0), new InitialDirectionBounds(Vector3.right));
@@ -133,6 +146,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator BothMovementTypes_ReturnIntoCameraViewport()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new MovementWorld();
             var camera = world.CreateCamera();
             var bounds = new CameraMovementBounds(camera);
@@ -158,6 +172,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator DisablingMovement_ResetsVisualAndReenablingStartsFreshJump()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var world = new MovementWorld();
             var frog = world.Create(world.Definition("Frog"), Vector3.zero);
             var controller = frog.GetComponent<AnimalMovementController>();
@@ -178,6 +193,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator Wandering_ChoosesNewHeadingAfterConfiguredInterval()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var random = new RandomScope();
             using var world = new MovementWorld();
             var definition = world.LinearPrey();
@@ -193,10 +209,51 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             Assert.That(controller.Direction.sqrMagnitude, Is.EqualTo(1f).Within(0.001f));
         }
 
-        [UnityTearDown]
-        public IEnumerator ExitPlayModeAfterTest()
+        [UnityTest]
+        public IEnumerator SnakeColliderAndVisualFollowTheSameHeading()
         {
-            if (Application.isPlaying) yield return new ExitPlayMode();
+            yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
+            using var world = new MovementWorld();
+            var snake = world.Create(world.Definition("Snake"), Vector3.zero, new InitialDirectionBounds(Vector3.right));
+            yield return AdvanceFixedTime(0.2f);
+            Assert.That(Vector3.Dot(snake.transform.forward, Vector3.right), Is.GreaterThan(0.99f));
+            Assert.That(Vector3.Dot(snake.Visual.forward, snake.transform.forward), Is.GreaterThan(0.99f));
+            var frog = world.Create(world.Definition("Frog"), snake.Body.position + Vector3.right * .8f);
+            frog.GetComponent<AnimalMovementController>().enabled = false;
+            frog.Body.isKinematic = true;
+            Physics.SyncTransforms();
+            var capsule = snake.GetComponent<CapsuleCollider>();
+            var sphere = frog.GetComponent<SphereCollider>();
+            Assert.That(Physics.ComputePenetration(capsule, snake.Body.position, snake.Body.rotation,
+                sphere, frog.transform.position, frog.transform.rotation, out _, out _), Is.True,
+                "A prey touching the visible head must intersect the snake's physics shape.");
+            frog.transform.position = snake.Body.position + Vector3.forward * 1.1f;
+            Assert.That(Physics.ComputePenetration(capsule, snake.Body.position, snake.Body.rotation,
+                sphere, frog.transform.position, frog.transform.rotation, out _, out _), Is.False,
+                "The snake must not eat prey separated from its visible side.");
+        }
+
+        [UnityTest]
+        public IEnumerator JumpHasVisibleScaleAndStopRestoresAuthoredScale()
+        {
+            yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
+            using var world = new MovementWorld();
+            using var physics = new ManualPhysics();
+            var body = world.CreateBody();
+            var visual = world.CreateVisual(body);
+            var restScale = new Vector3(.8f, 1f, .7f);
+            visual.localScale = restScale;
+            var movement = new JumpMovementBehaviour(body, visual, world.JumpSettings(.3f, 1f));
+            for (var step = 0; step < 8; step++) physics.Step(movement, body);
+            movement.UpdateVisual();
+            Assert.That(visual.localScale.x, Is.GreaterThan(restScale.x));
+            Assert.That(visual.localScale.z, Is.GreaterThan(restScale.z));
+            Assert.That(body.position.y, Is.EqualTo(0f).Within(.001f));
+            movement.Stop();
+            Assert.That(visual.localScale, Is.EqualTo(restScale));
+            Assert.That(visual.localPosition, Is.EqualTo(Vector3.zero));
         }
 
         private static IEnumerator AdvanceFixedTime(float duration)

@@ -20,12 +20,20 @@ using Zenject;
 
 namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
 {
-    public sealed class GameSessionPlayModeTests
+    public sealed class GameSessionPlayModeTests : GamePlayModeTestFixture
     {
+
+        [UnityTearDown]
+        public IEnumerator ExitPlayModeAfterTest()
+        {
+            SceneContext.ParentContainers = null;
+            if (Application.isPlaying) yield return new ExitPlayMode();
+        }
         [UnityTest]
         public IEnumerator BootstrapPreparesWorldAndStopAllowsCleanRestart()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var session = new Session();
             session.Machine.Enter<BootStrapState>();
             yield return session.WaitForGameplay();
@@ -57,6 +65,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator DirectGameEntryWaitsForPreparationAndDoesNotReloadScene()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var session = new Session();
             yield return session.LoadGame();
             var scene = SceneManager.GetActiveScene();
@@ -74,6 +83,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator InvalidCameraStopsPreparationBeforeGameplay()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var session = new Session();
             yield return session.LoadGame();
             session.Camera.enabled = false;
@@ -88,6 +98,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator StoppingDuringNativeLoadPreventsSessionFromStarting()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var session = new Session();
             session.Machine.Enter<BootStrapState>();
             Assert.That(session.Machine.CurrentStateType, Is.EqualTo(typeof(LoadLevelState)));
@@ -107,6 +118,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
         public IEnumerator DisablingWorldCleansAnimalsAndDoesNotCountDeaths()
         {
             yield return new EnterPlayMode();
+            yield return StartWithStoppedProjectContext();
             using var session = new Session();
             session.Machine.Enter<BootStrapState>();
             yield return session.WaitForGameplay();
@@ -122,12 +134,6 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
             Assert.That(session.Spawner.IsRunning, Is.False);
         }
 
-        [UnityTearDown]
-        public IEnumerator ExitPlayModeAfterTest()
-        {
-            if (Application.isPlaying) yield return new ExitPlayMode();
-        }
-
         private sealed class Session : IDisposable
         {
             private readonly AssetProvider _assets;
@@ -139,7 +145,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
 
             public Session()
             {
-                var container = ProjectContext.Instance.Container;
+                var container = ProjectContext.Instance.Container.CreateSubContainer();
                 _assets = new AssetProvider(container);
                 container.BindInstance<IAssetProvider>(_assets);
                 container.BindInstance(AssetDatabase.LoadAssetAtPath<GameConfig>("Assets/Core/Settings/Configs/GameConfig.asset"));
@@ -151,6 +157,7 @@ namespace Core.Scripts.Game.Infrastructure.StateMachines.StateMachineTests
                 container.BindFactory<GameStateMachine, GamePlayState, GamePlayState.Factory>().AsSingle();
                 container.Bind<GameStateMachine>().AsSingle();
                 Machine = container.Resolve<GameStateMachine>();
+                SceneContext.ParentContainers = new[] { container };
             }
 
             public IEnumerator LoadGame()

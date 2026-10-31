@@ -1307,7 +1307,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 828328660376761502}
-  - component: {fileID: 4098807768496308185}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -1344,18 +1343,6 @@ Transform:
   - {fileID: 4010936377432200947}
   m_Father: {fileID: 2040685257975913743}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4098807768496308185
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5143853867753712434}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 032f5ceb59fd4c9bfb3e05983adede62, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Template.Game.Animals::Core.Scripts.Game.Gameplay.Animals.Movement.AnimalVisualOrientation
 --- !u!1 &5364642114100898925
 GameObject:
   m_ObjectHideFlags: 0

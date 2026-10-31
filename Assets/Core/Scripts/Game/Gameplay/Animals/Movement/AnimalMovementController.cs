@@ -40,6 +40,11 @@ namespace Core.Scripts.Game.Gameplay.Animals.Movement
                 if (_timeToTurn <= 0f) ChooseDirection();
             }
             _movement.FixedTick(_direction, Time.fixedDeltaTime);
+            // Rotate the physics owner, so its collider and visual share one heading.
+            // Actual velocity preserves the launch heading during a jump and physical recoil.
+            var heading = AnimalMotion.PlanarVelocity(_animal.Body);
+            if (heading.sqrMagnitude < 0.000001f) heading = _direction;
+            _animal.Body.MoveRotation(Quaternion.LookRotation(heading, Vector3.up));
         }
 
         private void LateUpdate()

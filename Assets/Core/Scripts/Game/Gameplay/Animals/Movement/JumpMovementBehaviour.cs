@@ -8,6 +8,7 @@ namespace Core.Scripts.Game.Gameplay.Animals.Movement
         private readonly Rigidbody _body;
         private readonly Transform _visual;
         private readonly Vector3 _restPosition;
+        private readonly Vector3 _restScale;
         private readonly JumpMovementSettings _settings;
         private double _time;
         private double _nextJumpTime;
@@ -21,6 +22,7 @@ namespace Core.Scripts.Game.Gameplay.Animals.Movement
             _body = body;
             _visual = visual;
             _restPosition = visual.localPosition;
+            _restScale = visual.localScale;
             _settings = settings;
         }
 
@@ -79,6 +81,8 @@ namespace Core.Scripts.Game.Gameplay.Animals.Movement
                 ? Mathf.Max(0f, Mathf.Sin(Mathf.PI * (_elapsed / _settings.Duration))) * _settings.Height
                 : 0f;
             _visual.localPosition = _restPosition + Vector3.up * height;
+            // A top-down orthographic camera cannot show the Y arc. Scale makes lift visible.
+            _visual.localScale = _restScale * (1f + height * 0.3f);
         }
 
         public override void Stop()
@@ -88,7 +92,11 @@ namespace Core.Scripts.Game.Gameplay.Animals.Movement
             _elapsed = 0;
             _jumping = false;
             _collided = false;
-            if (_visual != null) _visual.localPosition = _restPosition;
+            if (_visual != null)
+            {
+                _visual.localPosition = _restPosition;
+                _visual.localScale = _restScale;
+            }
         }
     }
 }
