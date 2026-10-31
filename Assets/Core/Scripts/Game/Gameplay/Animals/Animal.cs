@@ -15,6 +15,7 @@ namespace Core.Scripts.Game.Gameplay.Animals
 
         public event Action<Animal> Died;
         public event Action<Animal> Ate;
+        public event Action<Animal> Removed;
 
         public long Id { get; private set; }
         public AnimalDefinition Definition { get; private set; }
@@ -77,9 +78,17 @@ namespace Core.Scripts.Game.Gameplay.Animals
         {
             // Scene cleanup and external destruction are not gameplay deaths.
             _isAlive = false;
-            Died = null;
-            Ate = null;
-            _releaseInstance = null;
+            try
+            {
+                Removed?.Invoke(this);
+            }
+            finally
+            {
+                Died = null;
+                Ate = null;
+                Removed = null;
+                _releaseInstance = null;
+            }
         }
     }
 }

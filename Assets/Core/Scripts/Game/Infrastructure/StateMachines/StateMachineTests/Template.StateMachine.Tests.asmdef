@@ -2,6 +2,8 @@
     "name": "Template.StateMachine.Tests",
     "rootNamespace": "",
     "references": [
+        "Template.Game.UI",
+        "UnityEngine.UI",
         "GUID:4bdc02a2b9d209ff329c27a747f8cbb9",
         "GUID:3a8528f7e76abb74baee4258f650a672",
         "Template.Infrastructure.TestHelpers",

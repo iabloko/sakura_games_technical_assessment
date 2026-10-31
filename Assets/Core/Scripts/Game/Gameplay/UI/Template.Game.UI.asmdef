@@ -1,0 +1,8 @@
+{
+    "name": "Template.Game.UI",
+    "references": [
+        "Template.Game.Animals",
+        "Template.Game.Configuration",
+        "UnityEngine.UI"
+    ]
+}
